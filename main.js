@@ -31,10 +31,25 @@ const closeIssue = id => {
 
 const deleteIssue = id => {
   const issues = JSON.parse(localStorage.getItem('issues'));
-  const remainingIssues = issues.filter( issue.id !== id )
+  const remainingIssues = issues.filter(issue => issue.id !== id )
   localStorage.setItem('issues', JSON.stringify(remainingIssues));
+  fetchIssues()
 }
 
+const currentIssues = () => {
+  let totalOpenIssues = 0;
+  let totalCloseIssues = 0;
+  const issues = JSON.parse(localStorage.getItem('issues'));
+  issues.forEach(issue => {
+    if(issue.status === "Open"){
+      totalOpenIssues = totalOpenIssues + 1;
+    }else{
+      totalCloseIssues = totalCloseIssues + 1;
+    }
+  })
+  document.getElementById('openIssue').innerText = 'Open ' + totalOpenIssues;
+  document.getElementById('closedIssue').innerText = 'Closed ' + totalCloseIssues;
+}
 const fetchIssues = () => {
   const issues = JSON.parse(localStorage.getItem('issues'));
   const issuesList = document.getElementById('issuesList');
@@ -49,8 +64,9 @@ const fetchIssues = () => {
                               <h3> ${description} </h3>
                               <p><span class="glyphicon glyphicon-time"></span> ${severity}</p>
                               <p><span class="glyphicon glyphicon-user"></span> ${assignedTo}</p>
-                              <a href="#" onclick="setStatusClosed(${id})" class="btn btn-warning">Close</a>
-                              <a href="#" onclick="deleteIssue(${id})" class="btn btn-danger">Delete</a>
+                              <a href="#" onclick="closeIssue('${id}')" class="btn btn-warning">Close</a>
+                              <a href="#" onclick="deleteIssue('${id}')" class="btn btn-danger">Delete</a>
                               </div>`;
   }
+  currentIssues()
 }
